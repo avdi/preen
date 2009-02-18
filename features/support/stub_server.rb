@@ -39,18 +39,7 @@ class StubServer
         line = stdout.gets until line =~ /listening/i
         yield
         Process.kill("QUIT", pid)
-        YAML.each_document(stdout) do |log_entry|
-          case (type = log_entry.delete('stubserver-log-type'))
-          when 'env'
-            @requests << Rack::Request.new(log_entry)
-          when 'error'
-            raise(ServerError,
-                  "stubserver #{pid} failed with " \
-                  "#{log_entry['class']}: #{log_entry['message']}}")
-          else
-            raise "Unkown stubserver log entry type: #{type.inspect}"
-          end
-        end
+        process_log(stdout, pid)
       end
     end
   end
@@ -64,5 +53,21 @@ class StubServer
       'port'    => @port
     }
     YAML.dump(config)
+  end
+
+  def process_log(stdout, pid)
+    YAML.each_document(stdout) do |log_entry|
+      case (type = log_entry.delete('stubserver-log-type'))
+      when 'env'
+        @requests << Rack::Request.new(log_entry)
+      when 'error'
+        raise(ServerError,
+              "stubserver #{pid} failed with " \
+              "#{log_entry['class']}: #{log_entry['message']}}")
+      else
+        raise "Unkown stubserver log entry type: #{type.inspect}"
+      end
+    end
+
   end
 end

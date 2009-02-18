@@ -36,11 +36,23 @@ Then /^preen should remember that my (.*) is (.*)$/ do |key, value|
   end
 end
 
-Then /^preen should announce "(.*)" on Ping\.fm$/ do |path|
+Then /^preen should announce "(.*)" on Ping\.fm$/ do |reddit_path|
+  requirements = {
+    :path_info => '/v1/user.post',
+    :params => {
+      'api_key'      => Preen::PINGFM_API_KEY,
+      'user_app_key' => PINGM_USER_KEY,
+      'post_method'  => 'default',
+      'body'         => /I'm on Reddit! .*#{reddit_path}/
+    }
+  }
+  @pingfm.should have_received_request(requirements)
 end
 
 Then /^preen should not announce "(.*)" on Ping\.fm$/ do |path|
+  pending
 end
 
 Then /^preen should not announce any articles on Ping\.fm$/ do
+  pending
 end

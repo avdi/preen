@@ -18,9 +18,9 @@ Feature: User preens
       |/page3          |reddit_page3.html|
       |/page4          |reddit_page4.html|
    When I run "preen scan"
-   Then preen should announce "/article1" on Ping.fm
-    And preen should announce "/article2" on Ping.fm
-    But preen should not announce "/article3" on Ping.fm
+   Then preen should announce "/john_doe_article_1" on Ping.fm
+    And preen should announce "/john_doe_article_2" on Ping.fm
+    But preen should not announce "/john_doe_article_3" on Ping.fm
 
   Scenario: run preen again
   Given that I have initialized preen
