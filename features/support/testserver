@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'main'
+require 'thin'
+require 'rack/lobster'
+
+server = Thin::Server.new('/home/avdi/dev/preen/tmp/server.sock', :pid_file => '/home/avdi/dev/preen/tmp/server.pid') do
+  use Rack::CommonLogger
+  use Rack::ShowExceptions
+  map "/lobster" do
+    use Rack::Lint
+    run Rack::Lobster.new
+  end
+end
+
+server.daemonize

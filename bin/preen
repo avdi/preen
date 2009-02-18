@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'main'
+require 'yaml/store'
+require 'etc'
+require 'pathname'
+
+require File.expand_path(
+    File.join(File.dirname(__FILE__), %w[.. lib preen]))
+
+Main do
+  PREEN_DIR = Pathname(ENV['HOME'] || Etc.getpwent.dir) + '.preen'
+  DATA_FILE = PREEN_DIR + 'preen.dat'
+
+  def with_store
+    PREEN_DIR.mkpath
+    store = YAML::Store.new(DATA_FILE.to_s)
+    store.transaction do |store|
+      yield(store)
+    end
+  end
+
+  # For testing purposes
+  environment('REDDIT_HOST')
+  environment('PINGFM_HOST')
+
+  mode 'init' do
+    option('pingfm-key') do
+      required
+      argument_required
+      description 'Ping.fm User App Key (http://ping.fm/key/)'
+    end
+
+    option('url-pattern') do
+      required
+      argument_required
+      description 'The URL pattern for which to scan Reddit'
+    end
+
+    def run
+      with_store do |store|
+        Preen::Application.new(store).init!(params)
+      end
+    end
+  end
+
+  mode 'info' do
+    def run
+      with_store do |store|
+        puts Preen::Application.new(store).formatted_info
+      end
+    end
+  end
+
+  mode 'scan' do
+    def run
+      with_store do |store|
+        Preen::Application.new(store).scan!
+      end
+    end
+  end
+end
+
+# EOF

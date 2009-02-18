@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+# A tiny web server for testing HTTP clients.  Expects STDIN to contain a YAML
+# document defining the pages to serve.
+
+require 'rubygems'
+require 'thin'
+require 'yaml'
+
+
+def log_error(error)
+  log_entry = {
+    'stubserver-log-type' => 'error',
+    'class'               => error.class.name,
+    'message'             => error.message,
+    'backtrace'           => error.backtrace
+  }
+  YAML.dump(log_entry, $stdout)
+end
+
+begin
+  # A class that simply writes each request's Rack environment to stdout as a YAML
+  # document.
+  class YAMLLogger
+    def initialize(app)
+      @app = app
+    end
+
+    def call(env)
+      YAML.dump(env.merge('stubserver-log-type' => 'env'), $stdout)
+      @app.call(env)
+    rescue Exception => error
+      log_error(error)
+      Rack::Response.new("Error: #{error.message}", 500).finish
+    end
+  end
+
+  $stdout.sync = true
+  $stderr.sync = true
+
+  config = YAML.load($stdin)
+  pages  = config.fetch('pages') do
+    raise "Config must contain 'pages' section"
+  end
+
+  Thin::Server.start(config.fetch('address'){'0.0.0.0'},
+                     config.fetch('port'){3131}) do
+    use YAMLLogger
+    run(lambda do |env|
+          request  = Rack::Request.new(env)
+          page = pages.detect{|page| page.fetch('path') === request.path_info}
+          if page
+            Rack::Response.new(page.fetch('body'),
+                               page.fetch('status'){200},
+                               page.fetch('headers'){Hash.new}).finish
+          else
+            Rack::Response.new("Unknown path: #{request.path_info}", 404).finish
+          end
+        end)
+  end
+rescue Exception => error
+  log_error(error)
+end
