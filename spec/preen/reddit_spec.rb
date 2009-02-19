@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), %w[.. spec_helper])
 
-describe Preen::Reddit, "given a home url and a URL fetcher" do
+describe Preen::Reddit, "given a home url and a set of test pages" do
   HTML_DIR       = File.expand_path("../html", File.dirname(__FILE__))
   HTML_DIR_URL   = "file://#{HTML_DIR}"
   FRONT_PAGE_URL = "#{HTML_DIR_URL}/front_page.html"
@@ -20,7 +20,7 @@ describe Preen::Reddit, "given a home url and a URL fetcher" do
   after :each do
   end
 
-  describe "asked to scan 2 pages for a URL pattern" do
+  describe "and asked to scan 2 pages for a URL pattern" do
     def get_mentions
       @it.scan_pages(1, URL_PATTERN)
     end
@@ -34,7 +34,7 @@ describe Preen::Reddit, "given a home url and a URL fetcher" do
     end
   end
 
-  describe "asked to scan 3 pages for a URL pattern" do
+  describe "and asked to scan 3 pages for a URL pattern" do
     before :each do
       @mentions = get_mentions
     end

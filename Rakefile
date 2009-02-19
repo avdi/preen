@@ -17,7 +17,7 @@ task :default => 'spec:run'
 PROJ.name = 'preen'
 PROJ.authors = 'Avdi Grimm'
 PROJ.email = 'avdi@avdi.org'
-PROJ.url = 'FIXME (project homepage)'
+PROJ.url = 'http://github.com/avdi/preen'
 PROJ.version = Preen::VERSION
 PROJ.rubyforge.name = 'preen'
 PROJ.readme_file = 'README.rdoc'
@@ -27,7 +27,7 @@ PROJ.readme_file = 'README.rdoc'
 PROJ.ruby_opts = []
 
 # RSpec
-PROJ.spec.opts << '--color'
+PROJ.spec.opts << '--color -fs'
 
 # RDoc
 PROJ.rdoc.include << '\.rdoc$'

@@ -6,7 +6,7 @@ Feature: User preens
   Scenario: initialize preen
   Given this is the first time I have run preen
    When I run "preen init --pingfm-key 1234 --url-pattern http://johndoe.example.com/"
-    And preen should remember that my Ping.fm Key is 1234
+   Then preen should remember that my Ping.fm Key is 1234
     And preen should remember that my URL Pattern is http:\/\/johndoe\.example\.com\/
 
   Scenario: run preen
