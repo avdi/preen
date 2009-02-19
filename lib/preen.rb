@@ -1,9 +1,12 @@
 module Preen
 
   # :stopdoc:
-  VERSION = '1.0.0'
-  LIBPATH = ::File.expand_path(::File.dirname(__FILE__)) + ::File::SEPARATOR
-  PATH = ::File.dirname(LIBPATH) + ::File::SEPARATOR
+  VERSION        = '1.0.0'
+  LIBPATH        = ::File.expand_path(::File.dirname(__FILE__)) +
+    ::File::SEPARATOR
+  PATH           = ::File.dirname(LIBPATH) + ::File::SEPARATOR
+
+  PINGFM_API_KEY = "c2ad3f2b4a000fa689a5488848c268a9"
 
   # Returns the version string for the library.
   #

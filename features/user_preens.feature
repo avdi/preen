@@ -18,7 +18,11 @@ Feature: User preens
       |/page3          |reddit_page3.html|
       |/page4          |reddit_page4.html|
    When I run "preen scan"
-   Then preen should announce "/john_doe_article_1" on Ping.fm
+   Then preen should scan the Reddit path "/r/programming/"
+    And preen should scan the Reddit path "/page2"
+    And preen should scan the Reddit path "/page3"
+    But preen should not scan the Reddit path "/page4" 
+    And preen should announce "/john_doe_article_1" on Ping.fm
     And preen should announce "/john_doe_article_2" on Ping.fm
     But preen should not announce "/john_doe_article_3" on Ping.fm
 

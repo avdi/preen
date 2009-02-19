@@ -15,6 +15,8 @@ HTML_DIR    = File.join(ROOT, 'features', 'support', 'html')
 REDDIT_PORT = 3131
 PINGFM_PORT = 3133
 
+PINGFM_USER_KEY = "FAKEUSERKEY"
+
 TEST_ENV   = {
   'HOME'        => TEST_HOME,
   'PATH'        => BIN_DIR + ':' + ENV['PATH'],
@@ -44,8 +46,21 @@ def with_test_env
   end
 end
 
+def make_pingfm_request_pattern(reddit_path)
+  {
+    :path_info => '/v1/user.post',
+    :params => {
+      'api_key'      => Preen::PINGFM_API_KEY,
+      'user_app_key' => PINGFM_USER_KEY,
+      'post_method'  => 'default',
+      'body'         => /I'm on Reddit! .*#{reddit_path}/
+    }
+  }
+end
+
 Before do
   @reddit = StubServer.new(REDDIT_PORT)
+  @pingfm = StubServer.new(PINGFM_PORT)
 end
 
 After do

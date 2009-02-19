@@ -7,7 +7,7 @@ Given /^I have run "(.*)" once already$/ do |command|
 end
 
 Given /^that I have initialized preen$/ do
-  When 'I run "preen init --pingfm-key 1234 --url-pattern http://johndoe.example.com/"'
+  When "I run \"preen init --pingfm-key #{PINGFM_USER_KEY} --url-pattern http://johndoe.example.com/\""
 end
 
 Given /^reddit is serving the following pages:$/ do |pages_table|
@@ -37,22 +37,24 @@ Then /^preen should remember that my (.*) is (.*)$/ do |key, value|
 end
 
 Then /^preen should announce "(.*)" on Ping\.fm$/ do |reddit_path|
-  requirements = {
-    :path_info => '/v1/user.post',
-    :params => {
-      'api_key'      => Preen::PINGFM_API_KEY,
-      'user_app_key' => PINGM_USER_KEY,
-      'post_method'  => 'default',
-      'body'         => /I'm on Reddit! .*#{reddit_path}/
-    }
-  }
-  @pingfm.should have_received_request(requirements)
+  pattern = make_pingfm_request_pattern(reddit_path)
+  @pingfm.should have_received_request(pattern)
 end
 
 Then /^preen should not announce "(.*)" on Ping\.fm$/ do |path|
-  pending
+  pattern = make_pingfm_request_pattern(reddit_path)
+  @pingfm.should_not have_received_request(pattern)
 end
 
 Then /^preen should not announce any articles on Ping\.fm$/ do
-  pending
+  @pingfm.should have(0).requests
+end
+
+Then /^preen should scan the Reddit path "(.*)"$/ do |path|
+  puts @reddit.requests.inspect
+  @reddit.should have_received_request(:path_info => path)
+end
+
+Then /^preen should not scan the Reddit path "(.*)"$/ do |path|
+  @reddit.should_not have_received_request(:path_info => path)
 end
