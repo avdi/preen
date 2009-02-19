@@ -24,7 +24,7 @@ PROJ.readme_file = 'README.rdoc'
 
 
 # Uncomment to disable warnings
-# PROJ.ruby_opts = []
+PROJ.ruby_opts = []
 
 # RSpec
 PROJ.spec.opts << '--color'
