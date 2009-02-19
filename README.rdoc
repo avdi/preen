@@ -10,6 +10,8 @@ A tool for spam^H^H^H^Hinforming your friends when you've been reddited.
 == FEATURES/PROBLEMS:
 
 * No rate-limiting for Ping.fm
+* No public Ping.fm API key (yet)
+* This software is a proof-of-concept, and should not be used by anybody for any purpose.
 
 == SYNOPSIS:
 
