@@ -1,18 +1,21 @@
 preen
     by Avdi Grimm
-    FIXME (url)
+    http://github.com/avdi/preen/
 
 == DESCRIPTION:
 
-FIXME (describe your package)
+preen (v) 3. To pride or congratulate oneself for achievement
+
+A tool for spam^H^H^H^Hinforming your friends when you've been reddited.
 
 == FEATURES/PROBLEMS:
 
-* FIXME (list of features or problems)
+* No rate-limiting for Ping.fm
 
 == SYNOPSIS:
 
-  FIXME (code sample of usage)
+  preen init --pingfm-key MY_PINGFM_APP_KEY --url-pattern myblog.example.com
+  preen scan --verbose
 
 == REQUIREMENTS:
 
@@ -20,7 +23,7 @@ FIXME (describe your package)
 
 == INSTALL:
 
-* FIXME (sudo gem install, anything else)
+  sudo gem install preen
 
 == LICENSE:
 
