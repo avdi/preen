@@ -19,7 +19,16 @@ A tool for spam^H^H^H^Hinforming your friends when you've been reddited.
 
 == REQUIREMENTS:
 
-* FIXME (list of requirements)
+* main
+* ick
+* mechanize
+* pingfm
+
+== DEVELOPMENT REQUIREMENTS
+
+* open4
+* thin
+* rack
 
 == INSTALL:
 
@@ -29,7 +38,7 @@ A tool for spam^H^H^H^Hinforming your friends when you've been reddited.
 
 (The MIT License)
 
-Copyright (c) 2008 FIXME (different license?)
+Copyright (c) 2008 Avdi Grimm
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
