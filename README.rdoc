@@ -32,7 +32,7 @@ A tool for spam^H^H^H^Hinforming your friends when you've been reddited.
 
 == INSTALL:
 
-  sudo gem install preen
+  sudo gem install avdi-preen --source http://gems.github.com
 
 == LICENSE:
 
