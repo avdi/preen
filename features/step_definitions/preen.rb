@@ -7,7 +7,7 @@ Given /^I have run "(.*)" once already$/ do |command|
 end
 
 Given /^that I have initialized preen$/ do
-  When "I run \"preen init --pingfm-key #{PINGFM_USER_KEY} --url-pattern http://johndoe.example.com/\""
+  When "I run \"preen init --pingfm-key #{PINGFM_USER_KEY} --url-pattern johndoe.example.com\""
 end
 
 Given /^reddit is serving the following pages:$/ do |pages_table|
@@ -17,11 +17,13 @@ Given /^reddit is serving the following pages:$/ do |pages_table|
 end
 
 When /^I run "(.*)"$/ do |command|
-  @reddit.run do
-    with_test_env do
-      response = `#{command}`
-      unless $? == 0
-        raise "Command `#{command}` failed (#{$?}) with output: '#{response}'"
+  @pingfm.run do
+    @reddit.run do
+      with_test_env do
+        response = `#{command}`
+        unless $? == 0
+          raise "Command `#{command}` failed (#{$?}) with output: '#{response}'"
+        end
       end
     end
   end
@@ -37,13 +39,17 @@ Then /^preen should remember that my (.*) is (.*)$/ do |key, value|
 end
 
 Then /^preen should announce "(.*)" on Ping\.fm$/ do |reddit_path|
-  pattern = make_pingfm_request_pattern(reddit_path)
-  @pingfm.should have_received_request(pattern)
+  body_pattern = Regexp.new(reddit_path)
+  @pingfm.has_received_request? {  |request|
+    request.params['body'] =~ body_pattern
+  }.should be_true
 end
 
-Then /^preen should not announce "(.*)" on Ping\.fm$/ do |path|
-  pattern = make_pingfm_request_pattern(reddit_path)
-  @pingfm.should_not have_received_request(pattern)
+Then /^preen should not announce "(.*)" on Ping\.fm$/ do |reddit_path|
+  body_pattern = Regexp.new(reddit_path)
+  @pingfm.has_received_request? {  |request|
+    request.params['body'] =~ body_pattern
+  }.should be_false
 end
 
 Then /^preen should not announce any articles on Ping\.fm$/ do
@@ -51,7 +57,6 @@ Then /^preen should not announce any articles on Ping\.fm$/ do
 end
 
 Then /^preen should scan the Reddit path "(.*)"$/ do |path|
-  puts @reddit.requests.inspect
   @reddit.should have_received_request(:path_info => path)
 end
 

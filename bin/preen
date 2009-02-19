@@ -21,9 +21,29 @@ Main do
     end
   end
 
+  def with_environment
+    # HACK Ugly, but necessary for full-stack testability
+    ::Pingfm.instance_eval do remove_const(:API_URL) end
+    ::Pingfm.const_set(:API_URL, params['PINGFM_URL'].value)
+
+    with_store do |store|
+      yield(store)
+    end
+  end
+
+  def application(store)
+    microblog = Preen::PingFm.new(store.fetch('pingfm-key'))
+    news_site = Preen::Reddit.new(params['REDDIT_URL'].value)
+    Preen::Application.new(store, news_site, microblog)
+  end
+
   # For testing purposes
-  environment('REDDIT_HOST')
-  environment('PINGFM_HOST')
+  environment('REDDIT_URL') do
+    default 'http://www.reddit.com/r/programming/new?sort=new'
+  end
+  environment('PINGFM_URL') do
+    default 'http://api.ping.fm/v1'
+  end
 
   mode 'init' do
     option('pingfm-key') do
@@ -36,10 +56,11 @@ Main do
       required
       argument_required
       description 'The URL pattern for which to scan Reddit'
+      cast lambda {|pattern|  Regexp.new(Regexp.escape(pattern))}
     end
 
     def run
-      with_store do |store|
+      with_environment do |store|
         Preen::Application.new(store).init!(params)
       end
     end
@@ -47,16 +68,16 @@ Main do
 
   mode 'info' do
     def run
-      with_store do |store|
-        puts Preen::Application.new(store).formatted_info
+      with_environment do |store|
+        puts application(store).formatted_info
       end
     end
   end
 
   mode 'scan' do
     def run
-      with_store do |store|
-        Preen::Application.new(store).scan!
+      with_environment do |store|
+        application(store).scan!
       end
     end
   end

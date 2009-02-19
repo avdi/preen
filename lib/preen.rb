@@ -44,6 +44,12 @@ module Preen
   end
   # :startdoc:
 
+  # An error stemming from a problem with the data store initialization
+  class InitError < RuntimeError
+  end
+
+
+
 end  # module Preen
 
 Preen.require_all_libs_relative_to(__FILE__)

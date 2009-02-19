@@ -4,6 +4,7 @@ require 'rack'
 require 'pathname'
 require 'open4'
 require 'timeout'
+require 'stringio'
 
 class StubServer
   include Timeout
@@ -38,7 +39,7 @@ class StubServer
   # to receive requests.
   def run
     Open4.popen4(STUBSERVER_EXEC) do |pid, stdin, stdout, stderr|
-      timeout(3) do
+      timeout(30) do
         stdin.write(config_yaml)
         stdin.close
         line = stdout.gets until line =~ /listening/i
@@ -57,12 +58,17 @@ class StubServer
   # ending in "index.html"
   #
   # Note: currently only valid after a call to #run() has completed.
-  def has_received_request?(pattern)
-    requests.detect{ |request|
-      pattern.all?{|attribute, value|
-        value === request.send(attribute)
+  def has_received_request?(pattern=nil, &block)
+    raise "Must have pattern or block" unless pattern.nil? ^ block.nil?
+    if block
+      requests.any?(&block)
+    else
+      requests.detect{ |request|
+        pattern.all?{|attribute, value|
+          value === request.send(attribute)
+        }
       }
-    }
+    end
   end
 
   private
@@ -80,6 +86,7 @@ class StubServer
     YAML.each_document(stdout) do |log_entry|
       case (type = log_entry.delete('stubserver-log-type'))
       when 'env'
+        log_entry['rack.input'] = StringIO.new(log_entry['rack.input'])
         @requests << Rack::Request.new(log_entry)
       when 'error'
         raise(ServerError,

@@ -5,6 +5,7 @@
 require 'rubygems'
 require 'thin'
 require 'yaml'
+require 'stringio'
 
 
 def log_error(error)
@@ -26,7 +27,12 @@ begin
     end
 
     def call(env)
-      YAML.dump(env.merge('stubserver-log-type' => 'env'), $stdout)
+      logged_env = env.dup
+      # munge env for better serialization
+      logged_env['rack.input']  = env['rack.input'].read
+      logged_env.delete('rack.errors')
+      logged_env['stubserver-log-type'] = 'env'
+      YAML.dump(logged_env, $stdout)
       @app.call(env)
     rescue Exception => error
       log_error(error)

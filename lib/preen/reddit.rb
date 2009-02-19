@@ -21,6 +21,10 @@ module Preen
       end
     end
 
+    def name
+      "Reddit"
+    end
+
     # Starting at +home_url+, scan +num_pages+ for a Reddit entry that matches
     # +url_pattern+
     def scan_pages(num_pages, url_pattern)

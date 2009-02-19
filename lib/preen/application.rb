@@ -2,13 +2,7 @@ require 'open-uri'
 
 module Preen
   class Application
-    REDDIT_FRONT_PAGE_PATH = "/r/programming/"
-
-    # An error stemming from a problem with the data store initialization
-    class InitError < RuntimeError
-    end
-
-    def initialize(datastore, news_site, microblog)
+    def initialize(datastore, news_site=nil, microblog=nil)
       @datastore   = datastore
       @news_site   = news_site
       @microblog   = microblog
@@ -22,7 +16,7 @@ module Preen
 
     def formatted_info
       "Ping.fm Key: #{@datastore['pingfm-key']}\n" \
-      "URL Pattern: #{@datastore['url-pattern']}\n\n"
+      "URL Pattern: #{@datastore['url-pattern'].source}\n\n"
     end
 
     def scan!
@@ -37,11 +31,11 @@ module Preen
     private
 
     def reddit_host
-      @datastore.fetch('REDDIT_HOST'){"http://www.reddit.com"}
+      @datastore.fetch('REDDIT_URL')
     end
 
     def url_pattern
-      @datastore.fetch('url-pattern'){raise InitError, "No url pattern found!"}
+      @datastore.fetch('url-pattern')
     end
 
     def already_posted_url?(url)
