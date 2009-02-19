@@ -4,6 +4,9 @@ require 'mechanize'
 require 'ick'
 
 module Preen
+
+  # Implements the Preen news site protocol for Reddit.  Uses WWW::Mechanize to
+  # do the heavy lifting.
   class Reddit
     Ick::Returning.belongs_to self
 

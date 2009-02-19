@@ -1,4 +1,3 @@
-require 'ostruct'
 require File.join(File.dirname(__FILE__), %w[.. spec_helper])
 
 describe Preen::Reddit, "given a home url and a URL fetcher" do
