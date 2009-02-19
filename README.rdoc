@@ -1,10 +1,9 @@
-preen
+preen (v) 3. _To pride or congratulate oneself for achievement_
+
     by Avdi Grimm
     http://github.com/avdi/preen/
 
 == DESCRIPTION:
-
-preen (v) 3. To pride or congratulate oneself for achievement
 
 A tool for spam^H^H^H^Hinforming your friends when you've been reddited.
 
