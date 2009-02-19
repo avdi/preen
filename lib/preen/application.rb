@@ -1,9 +1,11 @@
 require 'open-uri'
+require 'logger'
 
 module Preen
   class Application
-    def initialize(datastore, news_site=nil, microblog=nil)
+    def initialize(datastore, log=Logger.new, news_site=nil, microblog=nil)
       @datastore   = datastore
+      @log         = log
       @news_site   = news_site
       @microblog   = microblog
     end
@@ -20,8 +22,10 @@ module Preen
     end
 
     def scan!
+      @log.info "Scanning 3 pages for #{url_pattern.source}"
       @news_site.scan_pages(3, url_pattern).each do |mention|
         unless already_posted_url?(mention.comment_url)
+          @log.info "Posting link #{mention.comment_url}"
           @microblog.post!("I'm on #{@news_site.name}: #{mention.comment_url}")
           remember_url(mention.comment_url)
         end

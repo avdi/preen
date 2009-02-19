@@ -2,6 +2,7 @@ require 'rubygems'
 require 'open-uri'
 require 'mechanize'
 require 'ick'
+require 'logger'
 
 module Preen
 
@@ -10,8 +11,10 @@ module Preen
   class Reddit
     Ick::Returning.belongs_to self
 
-    def initialize(home_url = "http://www.reddit.com/r/programming/")
+    def initialize(home_url = "http://www.reddit.com/r/programming/",
+                   log      = Logger.new($stderr))
       @home_url = home_url
+      @log      = log
       @agent    = WWW::Mechanize.new
       if $DEBUG
         require 'logger'
@@ -32,6 +35,7 @@ module Preen
         current_page = nil
         num_pages.times do |page_number|
           current_page = get_next_page(current_page)
+          @log.info "Scanning #{current_page.uri} for #{url_pattern}"
           current_page.search('.entry').each do |entry|
             link        = entry.css('a.title').first['href']
             comment_url = entry.css('a.comments').first['href']

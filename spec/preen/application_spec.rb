@@ -5,7 +5,7 @@ describe Preen::Application do
     before :each do
       @store = {
         'pingfm-key'  => '1234',
-        'url-pattern' => 'http://example.com',
+        'url-pattern' => Regexp.new('http://example.com/'),
         'posted-urls' => ['POSTED_URL_1']
       }
 
@@ -18,7 +18,8 @@ describe Preen::Application do
       @news_site  = stub("NewsSite",
                          :scan_pages => @mentions,
                          :name       => "Reddit")
-      @it      = Preen::Application.new(@store, @news_site, @microblog)
+      @log        = stub("Log").as_null_object
+      @it      = Preen::Application.new(@store, @log, @news_site, @microblog)
     end
 
     describe "and given the init command with required params" do
@@ -42,7 +43,7 @@ describe Preen::Application do
     describe "and given the scan command" do
       it "should scan 3 pages of the news site for url pattern" do
         @news_site.should_receive(:scan_pages).
-          with(3, "http://example.com").
+          with(3, %r[http://example.com/]).
           and_return([])
         @it.scan!
       end
@@ -71,7 +72,7 @@ describe Preen::Application do
     it "should be able to do a formatted dump of stored parameters" do
       @it.formatted_info.should ==
         "Ping.fm Key: 1234\n" \
-      "URL Pattern: http://example.com\n\n"
+      "URL Pattern: http://example.com/\n\n"
     end
   end
 

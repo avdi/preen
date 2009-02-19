@@ -5,7 +5,8 @@ describe Preen::PingFm do
     it "should initialize the client library with API and User keys" do
       Pingfm::Client.should_receive(:new).with(Preen::PINGFM_API_KEY,
                                                "FAKE_USER_KEY")
-      Preen::PingFm.new("FAKE_USER_KEY")
+      @log = stub("Log").as_null_object
+      Preen::PingFm.new("FAKE_USER_KEY", @log)
     end
   end
 
@@ -14,7 +15,8 @@ describe Preen::PingFm do
       @pingfm_client = stub("Pingfm::Client", :post => {:status => 'OK'})
       Pingfm::Client.stub!(:new).and_return(@pingfm_client)
       @user_key = "FAKE_USER_KEY"
-      @it = Preen::PingFm.new(@user_key)
+      @log = stub("Log").as_null_object
+      @it = Preen::PingFm.new(@user_key, @log)
     end
 
     it "should be able to post to Ping.fm" do

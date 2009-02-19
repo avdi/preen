@@ -5,6 +5,7 @@ require 'main'
 require 'yaml/store'
 require 'etc'
 require 'pathname'
+require 'logger'
 
 require File.expand_path(
     File.join(File.dirname(__FILE__), %w[.. lib preen]))
@@ -13,11 +14,14 @@ Main do
   PREEN_DIR = Pathname(ENV['HOME'] || Etc.getpwent.dir) + '.preen'
   DATA_FILE = PREEN_DIR + 'preen.dat'
 
-  def with_store
+  def with_store_and_log
+    log = Logger.new($stdout)
+    log.level = params[:verbose].value ? Logger::INFO : Logger::WARN
+
     PREEN_DIR.mkpath
     store = YAML::Store.new(DATA_FILE.to_s)
     store.transaction do |store|
-      yield(store)
+      yield(store, log)
     end
   end
 
@@ -26,15 +30,15 @@ Main do
     ::Pingfm.instance_eval do remove_const(:API_URL) end
     ::Pingfm.const_set(:API_URL, params['PINGFM_URL'].value)
 
-    with_store do |store|
-      yield(store)
+    with_store_and_log do |store, log|
+      yield(store, log)
     end
   end
 
-  def application(store)
-    microblog = Preen::PingFm.new(store.fetch('pingfm-key'))
-    news_site = Preen::Reddit.new(params['REDDIT_URL'].value)
-    Preen::Application.new(store, news_site, microblog)
+  def application(store, log)
+    microblog = Preen::PingFm.new(store.fetch('pingfm-key'), log)
+    news_site = Preen::Reddit.new(params['REDDIT_URL'].value, log)
+    Preen::Application.new(store, log, news_site, microblog)
   end
 
   # For testing purposes
@@ -43,6 +47,10 @@ Main do
   end
   environment('PINGFM_URL') do
     default 'http://api.ping.fm/v1'
+  end
+
+  option('verbose') do
+    cast :bool
   end
 
   mode 'init' do
@@ -60,24 +68,24 @@ Main do
     end
 
     def run
-      with_environment do |store|
-        Preen::Application.new(store).init!(params)
+      with_environment do |store, log|
+        Preen::Application.new(store, log).init!(params)
       end
     end
   end
 
   mode 'info' do
     def run
-      with_environment do |store|
-        puts application(store).formatted_info
+      with_environment do |store, log|
+        puts application(store, log).formatted_info
       end
     end
   end
 
   mode 'scan' do
     def run
-      with_environment do |store|
-        application(store).scan!
+      with_environment do |store, log|
+        application(store, log).scan!
       end
     end
   end

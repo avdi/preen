@@ -13,7 +13,8 @@ describe Preen::Reddit, "given a home url and a URL fetcher" do
   URL_PATTERN  = %r[http://johndoe.example.com/]
 
   before :each do
-    @it = Preen::Reddit.new(FRONT_PAGE_URL)
+    @log = stub("Log").as_null_object
+    @it = Preen::Reddit.new(FRONT_PAGE_URL, @log)
   end
 
   after :each do
