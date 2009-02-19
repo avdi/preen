@@ -1,4 +1,4 @@
-preen (v) 3. _To pride or congratulate oneself for achievement_
+preen (v) 3. <i>To pride or congratulate oneself for achievement</i>
 
     by Avdi Grimm
     http://github.com/avdi/preen/
