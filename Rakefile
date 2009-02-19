@@ -2,12 +2,7 @@
 # configured in this Rakefile. The .rake files in the tasks directory
 # are where the options are used.
 
-begin
-  require 'bones'
-  Bones.setup
-rescue LoadError
-  load 'tasks/setup.rb'
-end
+load 'tasks/setup.rb'
 
 ensure_in_path 'lib'
 require 'preen'
@@ -22,6 +17,18 @@ PROJ.version = Preen::VERSION
 PROJ.rubyforge.name = 'preen'
 PROJ.readme_file = 'README.rdoc'
 
+PROJ.exclude << 'tmp$'
+
+# Dependencies
+
+depend_on 'mechanize', '>= 0.9.0'
+depend_on 'ick',       '>= 0.3.0'
+depend_on 'pingfm',    '>= 1.0.1'
+depend_on 'main',      '>= 2.8.3'
+
+dev_depend_on 'open4', '>= 0.9.6'
+dev_depend_on 'thin',  '>= 1.0.0'
+dev_depend_on 'rack',  '>= 0.9.1'
 
 # Uncomment to disable warnings
 PROJ.ruby_opts = []

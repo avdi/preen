@@ -35,5 +35,6 @@ Feature: User preens
       |/page3          |reddit_page3.html|
       |/page4          |reddit_page4.html|
     And I have run "preen scan" once already
+   When I run "preen scan"
    Then preen should not announce any articles on Ping.fm
 
